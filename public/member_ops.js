@@ -154,6 +154,38 @@ function handle_members(event) {
       });
     } else if (event.target === deleteMember) {
     // Your code goes here!
+    let headers = { "Content-Type": "application/json" };
+    let csrf_cookie = getCookie("CSRF-TOKEN");
+    if (csrf_cookie) {
+      headers["X-CSRF-Token"] = csrf_cookie;
+    }
+    fetch(`${members_path}/${memberId2.value}`, {
+      method: "DELETE",
+      headers: headers,
+    }).then((response) => {
+      if (response.status === 200) {
+        response.json().then((data) => {
+          resultsDiv.innerHTML = "";
+          let parag = document.createElement("P");
+          parag.textContent = JSON.stringify(data);
+          resultsDiv.appendChild(parag);
+        });
+      } else {
+        response
+          .json()
+          .then((data) => {
+            alert(
+              `Return code ${response.status} ${
+                response.statusText
+              } ${JSON.stringify(data)}`,
+            );
+          })
+          .catch((error) => {
+            console.log(error);
+            alert(error);
+          });
+        }
+      });
     } else if (event.target === listFacts) {
       fetch(`${members_path}/${memberId3.value}/facts`).then((response) => {
         if (response.status === 200) {
@@ -181,8 +213,84 @@ function handle_members(event) {
       });
     } else if (event.target === createFact) {
       // Your code goes here!
+      var dataObject = {
+        fact_text: factText.value,
+        likes: likes.value,
+      };
+      let headers = { "Content-Type": "application/json" };
+      let csrf_cookie = getCookie("CSRF-TOKEN");
+      if (csrf_cookie) {
+        headers["X-CSRF-Token"] = csrf_cookie;
+      }
+      fetch(`${members_path}/${memberId4.value}/facts`, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(dataObject),
+      }).then((response) => {
+        if (response.status === 201) {
+          response.json().then((data) => {
+            resultsDiv.innerHTML = "";
+            let parag = document.createElement("P");
+            parag.textContent = JSON.stringify(data);
+            resultsDiv.appendChild(parag);
+          });
+        } else {
+          response
+           .json()
+           .then((data) => {
+              alert(`Return code ${response.status} ${
+                response.statusText
+              } ${JSON.stringify(data)}`,
+            );
+           })
+           .catch((error) => {
+            console.log(error);
+            alert(error);
+           });
+        }
+      });
     } else if (event.target === updateFact) {
       // Your code goes here!
+      //set the body of the JSON
+      var dataObject = {
+        fact_text: factNumber2.value,
+        likes: likes2.value,
+      };
+      //check for the token
+      let headers = { "Content-Type": "application/json" };
+      let csrf_cookie = getCookie("CSRF-TOKEN");
+      if (csrf_cookie) {
+        headers["X-CSRF-Token"] = csrf_cookie;
+      }
+      //if the token is there
+      fetch(`${members_path}/${memberId5.value}/facts/${factNumber.value}`, {
+        method: "PUT",
+        headers: headers,
+        body: JSON.stringify(dataObject),
+      }).then((response) => {
+        if (response.status === 200) {
+          response.json().then((data) => {
+            resultsDiv.innerHTML = "";
+            let parag = document.createElement("P");
+            parag.textContent = JSON.stringify(data);
+            resultsDiv.appendChild(parag);
+          });
+        } else {
+          response
+          .json()
+          .then((data) => {
+              alert(
+                `Return code ${response.status} ${
+                  response.statusText
+                } ${JSON.stringify(data)}`,
+              );
+            })
+          .catch((error) => {
+              console.log(error);
+              alert(error);
+            });
+        }
+      })
     } else if (event.target === showFact) {
       fetch(`${members_path}/${memberId6.value}/facts/${factNumber2.value}`).then(
         (response) => {
